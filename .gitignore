@@ -21,3 +21,9 @@ processing/node_modules
 
 # run helper
 processing/topics/helper/._trigger-full-run-helper.lua
+
+# TODO: temporarily ignore for experimentation with topic processing
+/package-lock.json
+/processing/package-lock.json
+/osmfiles/
+
