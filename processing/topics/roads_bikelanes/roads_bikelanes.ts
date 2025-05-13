@@ -7,7 +7,7 @@ export async function run() {
   const tablesToPrint = ['roads', 'bikelanes']
   for await (const table of tablesToPrint) {
     const [[count]] = await sql`
-      SELECT count(id) FROM roads
+      SELECT count(id) FROM ${sql(table)}
     `.values()
     console.log(`\nTable ${table} has ${count} rows.. printing first 100`)
     const rows : R[] = await sql`SELECT id, osm_id, tags FROM ${sql(table)} LIMIT 100`
