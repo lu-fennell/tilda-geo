@@ -18,6 +18,24 @@ import { bboxesFilter, filteredFilePath } from './filter'
 const topicPath = (topic: Topic) => join(TOPIC_DIR, topic)
 const mainFilePath = (topic: Topic) => join(topicPath(topic), topic)
 
+async function runTs(topic: Topic) {
+  console.log('runTopic: runTS', topic)
+  const tsFile = `${mainFilePath(topic)}.ts`
+  const exists = await Bun.file(tsFile).exists()
+
+  if (exists) {
+    try {
+      console.time(`Running TS ${tsFile}`)
+      const { run } = await import(tsFile)
+      await run()
+      console.timeEnd(`Running TS ${tsFile}`)
+    } catch (error) {
+      throw new Error(`Failed to run TS file "${tsFile}": ${error}`)
+    }
+  }
+
+}
+
 /**
  * Run the given topic's SQL file
  * @param topic
@@ -68,6 +86,7 @@ async function runLua(fileName: string, topic: Topic) {
 export async function runTopic(fileName: string, topic: Topic) {
   await runLua(fileName, topic)
   await runSQL(topic)
+  await runTs(topic)
 }
 
 /**
