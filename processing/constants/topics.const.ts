@@ -15,7 +15,10 @@ const bboxBerlin: TopicConfigBbox = [13.08283, 52.33446, 13.762245, 52.6783]
 const bboxBiBi: TopicConfigBbox = [9.0671, 48.9229, 9.1753, 48.9838]
 
 const config = [
-  ['roads_bikelanes', null],
+  // ['cqi_store_roads_and_paths', null],
+  ['cqi', null],
+  // 
+  // ['roads_bikelanes', null],
   // ['bikeroutes', null],
   // ['bicycleParking', null],
   // ['trafficSigns', null],

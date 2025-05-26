@@ -8,7 +8,8 @@ local requiredColumns = {
   tags = 'jsonb',
   meta = 'jsonb',
   geom = nil,
-  minzoom = 'integer',
+  -- TODO: re-enable
+  -- minzoom = 'integer',
 }
 
 local function validate_columns(columnList)
