@@ -2,14 +2,16 @@ package.path = package.path .. ";/processing/topics/helper/?.lua"
 local dir = ";/processing/topics/cqi/"
 package.path = package.path .. dir .. "sidepath_dict/?.lua"
 
+require('HighwayClasses')
 require('SidepathDict')
-local inspect = require('inspect')
+require('DefaultId')
+require('ExtractPublicTags')
+require('Metadata')
 
 local sidepath_dict = SidepathDict('/data/hashes/sidepath_dict_germany.jsonl')
 
--- TODO: we have no real table yet to fill.. we are just testing sidepath_dict reading
-local dummy_table = osm2pgsql.define_table({
-  name = 'cqi_dummy_table',
+local paths_table = osm2pgsql.define_table({
+  name = 'cqi_paths_with_sidepath_info_table',
   ids = { type = 'any', id_column = 'osm_id', type_column = 'osm_type' },
   columns = {
     { column = 'id',      type = 'text',      not_null = true },
@@ -24,15 +26,29 @@ local dummy_table = osm2pgsql.define_table({
 })
 
 
--- TODO: remove.. just to see that something has happened
-local printed = false
 function osm2pgsql.process_way(object)
   -- SidpathDict.get will only load the dict once
+  local tags = object.tags
+  local id =  DefaultId(object)
+
   local d = sidepath_dict:get()
-  -- TODO: remove.. just to see that something has happened
-  if not printed then
-    printed = true
-    local id, entry = next(d)
-    print('TODO: first entry: ', id, inspect(entry))
+  local entry = d[id]
+  if entry == nil then
+    tags.proc_is_sidepath = false
+  else
+    tags.proc_is_sidepath = (
+       IsSidepath(entry.count, entry.road_ids)
+       or IsSidepath(entry.count, entry.road_highways)
+       or IsSidepath(entry.count, entry.road_names)
+    )
   end
+  if PathClasses[tags.highway] then
+    paths_table:insert({
+      id = id,
+      tags = ExtractPublicTags(tags),
+      meta = Metadata(object),
+      geom = object:as_linestring(),
+    })
+  end
+
 end
