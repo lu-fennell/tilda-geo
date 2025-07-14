@@ -55,7 +55,7 @@ function osm2pgsql.process_way(object)
   if not tags.highway then return end
 
   -- Skip ways that are not relevant for sidepath estimation
-  if not IsSidepathRelevant(tags) then return end
+  -- if not IsSidepathRelevant(tags) then return end
    
   -- Skip any area. See https://github.com/FixMyBerlin/private-issues/issues/1038 for more.
   if tags.area == 'yes' then return end
